@@ -40,39 +40,38 @@ class SpeechRecognition(Block):
             with sr.Microphone() as source:
                 audio = self.r.listen(source)
             if self.platform().value == Platform.LocalMachineSphinx.value:
-                print("Here I am on my own again")
                 try:
                     self.audio_text = self.r.recognize_sphinx(audio)
-                    print("Sphinx thinks you said " + self.audio_text)
+                    self.logger.info("Sphinx thinks you said " + self.audio_text)
                 except sr.UnknownValueError:
                     self.audio_text = None
-                    print("Sphinx could not understand audio")
+                    self.logger.warning("Sphinx could not understand audio")
                 except sr.RequestError as e:
                     self.audio_text = None
-                    print("Sphinx error; {0}".format(e))
+                    self.logger.error("Sphinx error; {0}".format(e))
             elif self.platform().value == Platform.GoogleSpeech.value:
                 try:
                     # for testing purposes, we're just using the default API key
                     # to use another API key, use `r.recognize_google(audio, key="GOOGLE_SPEECH_RECOGNITION_API_KEY")`
                     # instead of `r.recognize_google(audio)`
                     self.audio_text = self.r.recognize_google(audio,key=self.key() if self.key() is not '' else None)
-                    print("Google Speech Recognition thinks you said " + self.audio_text)
+                    self.logger.info("Google Speech Recognition thinks you said " + self.audio_text)
                 except sr.UnknownValueError:
                     self.audio_text = None
-                    print("Google Speech Recognition could not understand audio")
+                    self.logger.warning("Google Speech Recognition could not understand audio")
                 except sr.RequestError as e:
                     self.audio_text = None
-                    print("Could not request results from Google Speech Recognition service; {0}".format(e))
+                    self.logger.error("Could not request results from Google Speech Recognition service; {0}".format(e))
             elif self.platform().value == Platform.WitAI.value:
                 try:
                     self.audio_text = self.r.recognize_wit(audio,key=self.key())
-                    print("Wit.ai thinks you said " + self.audio_text)
+                    self.logger.info("Wit.ai thinks you said " + self.audio_text)
                 except sr.UnknownValueError:
                     self.audio_text = None
-                    print("Wit.ai could not understand audio")
+                    self.logger.warning("Wit.ai could not understand audio")
                 except sr.RequestError as e:
                     self.audio_text = None
-                    print("Could not request results from Wit.ai service; {0}".format(e))
+                    self.logger.error("Could not request results from Wit.ai service; {0}".format(e))
 
             if self.audio_text:
                 sig = {self.attr_name():self.audio_text}
