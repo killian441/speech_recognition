@@ -48,7 +48,7 @@ class SpeechRecognition(Block):
                     self.logger.warning("Sphinx could not understand audio")
                 except sr.RequestError as e:
                     self.audio_text = None
-                    self.logger.error("Sphinx error; {0}".format(e))
+                    self.logger.exception("Sphinx error; {0}".format(e))
             elif self.platform().value == Platform.GoogleSpeech.value:
                 try:
                     # for testing purposes, we're just using the default API key
@@ -61,7 +61,7 @@ class SpeechRecognition(Block):
                     self.logger.warning("Google Speech Recognition could not understand audio")
                 except sr.RequestError as e:
                     self.audio_text = None
-                    self.logger.error("Could not request results from Google Speech Recognition service; {0}".format(e))
+                    self.logger.exception("Could not request results from Google Speech Recognition service; {0}".format(e))
             elif self.platform().value == Platform.WitAI.value:
                 try:
                     self.audio_text = self.r.recognize_wit(audio,key=self.key())
@@ -71,7 +71,7 @@ class SpeechRecognition(Block):
                     self.logger.warning("Wit.ai could not understand audio")
                 except sr.RequestError as e:
                     self.audio_text = None
-                    self.logger.error("Could not request results from Wit.ai service; {0}".format(e))
+                    self.logger.exception("Could not request results from Wit.ai service; {0}".format(e))
 
             if self.audio_text:
                 sig = {self.attr_name():self.audio_text}
