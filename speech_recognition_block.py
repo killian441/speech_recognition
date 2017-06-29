@@ -37,10 +37,10 @@ class SpeechRecognition(Block):
     def run(self):
 
         while not self._stop_event.is_set():
-            if platform() == Platform.LocalMachineSphinx:
-                with sr.Microphone() as source:
-                    audio = self.r.listen(source)
-
+            with sr.Microphone() as source:
+                audio = self.r.listen(source)
+            if self.platform().value == Platform.LocalMachineSphinx.value:
+                print("Here I am on my own again")
                 try:
                     self.audio_text = self.r.recognize_sphinx(audio)
                     print("Sphinx thinks you said " + self.audio_text)
@@ -50,7 +50,7 @@ class SpeechRecognition(Block):
                 except sr.RequestError as e:
                     self.audio_text = None
                     print("Sphinx error; {0}".format(e))
-            elif platform() == Platform.GoogleSpeech:
+            elif self.platform().value == Platform.GoogleSpeech.value:
                 try:
                     # for testing purposes, we're just using the default API key
                     # to use another API key, use `r.recognize_google(audio, key="GOOGLE_SPEECH_RECOGNITION_API_KEY")`
@@ -63,7 +63,7 @@ class SpeechRecognition(Block):
                 except sr.RequestError as e:
                     self.audio_text = None
                     print("Could not request results from Google Speech Recognition service; {0}".format(e))
-            elif platform() == Platform.WitAI:
+            elif self.platform().value == Platform.WitAI.value:
                 try:
                     self.audio_text = self.r.recognize_wit(audio,key=self.key())
                     print("Wit.ai thinks you said " + self.audio_text)
